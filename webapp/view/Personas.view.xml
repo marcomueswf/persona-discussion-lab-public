@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:View
+    controllerName="persona.discussion.lab.controller.Personas"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page title="{i18n>personasPageTitle}" showHeader="true" showNavButton="true" navButtonPress=".onBack">
+        <content>
+            <VBox class="sapUiResponsiveMargin">
+                <MessageStrip
+                    visible="{= ${api>/error} ? true : false }"
+                    type="Warning"
+                    text="{api>/error}" />
+                <Button text="{i18n>buttonCreatePersona}" press=".onCreatePersona" type="Emphasized" class="sapUiSmallMarginBottom" />
+                <List
+                    id="personasList"
+                    busy="{api>/busy}"
+                    items="{path: 'api>/personas'}">
+                    <items>
+                        <CustomListItem>
+                            <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMargin">
+                                <VBox>
+                                    <Title text="{api>name}" level="H3" />
+                                    <Text text="{api>role}" />
+                                </VBox>
+                                <HBox>
+                                    <Button text="{i18n>buttonEdit}" press=".onUpdatePersona" class="sapUiTinyMarginEnd" />
+                                    <Button icon="sap-icon://delete" tooltip="{i18n>buttonDelete}" press=".onDeletePersona" type="Reject" />
+                                </HBox>
+                            </HBox>
+                        </CustomListItem>
+                    </items>
+                </List>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

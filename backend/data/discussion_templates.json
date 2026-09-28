@@ -1,0 +1,83 @@
+[
+  {
+    "templateId": "8cc2f9cc-75d5-4edc-92e3-7b0b1c7a4d11",
+    "templateName": "Delphi: Vier-Tage-Woche in Unternehmen",
+    "sourceDiscussionId": "00000000-0000-0000-0000-000000000000",
+    "topic": "Soll die Vier-Tage-Woche in Unternehmen als reguläres Arbeitszeitmodell eingeführt werden?",
+    "strategy": "delphi",
+    "personaIds": [
+      "arbeitszeitforschung",
+      "unternehmensleitung",
+      "beschaeftigtenvertretung",
+      "mittelstaendischer_betrieb"
+    ],
+    "configuration": {
+      "model": "gpt-4.1-mini",
+      "temperature": 0.5,
+      "maxRounds": 5,
+      "tokenLimit": 1200,
+      "delphiItems": [
+        {
+          "itemId": "productivity",
+          "statement": "Eine Vier-Tage-Woche kann die Produktivität von Unternehmen langfristig steigern.",
+          "scaleMin": 1,
+          "scaleMax": 5,
+          "status": "active"
+        },
+        {
+          "itemId": "wellbeing",
+          "statement": "Eine Vier-Tage-Woche verbessert Gesundheit und Vereinbarkeit von Beruf und Privatleben.",
+          "scaleMin": 1,
+          "scaleMax": 5,
+          "status": "active"
+        },
+        {
+          "itemId": "feasibility",
+          "statement": "Eine Vier-Tage-Woche ist für die meisten Branchen organisatorisch umsetzbar.",
+          "scaleMin": 1,
+          "scaleMax": 5,
+          "status": "active"
+        }
+      ],
+      "roundPlan": {
+        "participantInstructionRound1": "Du befindest dich in Runde 1 einer Delphi-Befragung zur Vier-Tage-Woche. Entwickle unabhängig aus deiner Persona-Perspektive eine Einschätzung zu Chancen, Risiken und Bedingungen für eine Einführung. Nimm noch keine Rücksicht auf andere Positionen.",
+        "participantInstructionRound2": "Du befindest dich in Runde 2 einer Delphi-Befragung. Bewerte die im Prompt genannte These mit genau einer Zahl von 1 bis 5 (1=stimme gar nicht zu, 5=stimme voll zu). Begründe deine Bewertung kurz aus deiner Persona-Perspektive und berücksichtige den Rückblick auf die Vorrunde.",
+        "participantInstructionRound3": "Du befindest dich in Runde 3 einer Delphi-Befragung. Diskutiere das umstrittenste Item, benenne mindestens ein Gegenargument und erkläre, ob du deine Einschätzung beibehältst oder revidierst.",
+        "participantInstructionRound4": "Du befindest dich in Runde 4 einer Delphi-Befragung. Bewerte die im Prompt genannte These erneut mit genau einer Zahl von 1 bis 5 (1=stimme gar nicht zu, 5=stimme voll zu). Begründe deine Bewertung kurz aus deiner Persona-Perspektive und berücksichtige die Diskussion aus Runde 3.",
+        "participantInstructionRound5": "Du befindest dich in Runde 5 einer Delphi-Befragung. Formuliere einen Baustein für ein gemeinsames Zukunftsszenario zur Vier-Tage-Woche. Benenne den stärksten Konsenspunkt, eine verbleibende Kontroverse und eine konkrete Bedingung für die Umsetzung."
+      },
+      "delphiRoundPlan": {
+        "1": {
+          "mode": "open",
+          "itemIds": []
+        },
+        "2": {
+          "mode": "rate",
+          "itemIds": [
+            "productivity",
+            "wellbeing",
+            "feasibility"
+          ]
+        },
+        "3": {
+          "mode": "most_disputed",
+          "itemIds": []
+        },
+        "4": {
+          "mode": "rate",
+          "itemIds": [
+            "productivity",
+            "wellbeing",
+            "feasibility"
+          ]
+        },
+        "5": {
+          "mode": "synthesize",
+          "itemIds": []
+        }
+      }
+    },
+    "createdAt": "2026-09-27T00:00:00.000000+00:00",
+    "updatedAt": "2026-09-27T00:00:00.000000+00:00"
+  }
+]

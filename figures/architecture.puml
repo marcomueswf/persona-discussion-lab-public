@@ -1,0 +1,26 @@
+@startuml
+title Overall Architecture - Persona Discussion Lab
+
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+actor User as user
+component "OpenUI5 Webapp" as webapp
+component "FastAPI API" as api
+component "Application Services" as services
+component "Discussion Engine" as engine
+component "JSON Persistence" as persistence
+cloud "OpenAI-compatible Provider" as llm
+
+user --> webapp : uses
+webapp --> api : REST /api
+api --> services
+services --> engine : starts runs
+services --> persistence : reads / writes
+engine --> persistence : incremental run state
+engine --> llm : completions
+
+
+@enduml

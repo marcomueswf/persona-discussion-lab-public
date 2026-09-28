@@ -1,0 +1,41 @@
+@startuml discussion-engine-generic
+title Generic Discussion Engine - LangGraph Flow
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+component "DiscussionService._run" as service
+component "moderator" as moderator
+component "select_persona" as select
+component "persona_turn" as persona
+component "evaluate" as evaluate
+component "summary" as summary
+component "termination" as termination
+component "ChatClient" as client
+component "PromptService" as prompts
+database "Persisted discussion" as store
+
+service --> moderator : create engine
+moderator --> select
+select --> persona : next persona
+select --> summary : no personas left
+persona --> evaluate
+evaluate --> select : more personas
+evaluate --> summary : round complete
+summary --> termination
+termination --> moderator : next round
+termination --> service : end
+moderator --> prompts
+persona --> prompts
+summary --> prompts
+moderator --> client : optional selection
+persona --> client : completion
+summary --> client : summary completion
+service --> store : persist each turn
+service --> store : persist result/status
+
+note right of termination
+Stops when maximum rounds are
+reached or stopRequested is set.
+end note
+@enduml

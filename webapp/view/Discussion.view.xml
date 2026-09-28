@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:View controllerName="persona.discussion.lab.controller.Discussion" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Page title="{i18n>discussionPageTitle}">
+        <headerContent>
+            <Button icon="sap-icon://employee" tooltip="{i18n>tooltipManagePersonas}" press=".onNavigate"><customData><core:CustomData key="route" value="personas" writeToDom="false" /></customData></Button>
+            <Button icon="sap-icon://action-settings" tooltip="{i18n>tooltipSettings}" press=".onNavigate"><customData><core:CustomData key="route" value="settings" writeToDom="false" /></customData></Button>
+        </headerContent>
+        <content>
+            <VBox class="sapUiResponsiveMargin">
+                <ObjectStatus text="{api>/currentDiscussion/status}" state="Information" visible="{= !!${api>/currentDiscussion} }" />
+                <Label text="{i18n>labelDiscussionTopic}" />
+                <TextArea value="{ui>/currentTopic}" rows="3" width="100%" />
+                <Label text="{i18n>labelPersonas}" class="sapUiSmallMarginTop" />
+                <MultiComboBox selectedKeys="{ui>/selectedPersonaIds}" items="{api>/personas}">
+                    <core:Item key="{api>personaId}" text="{api>name}" />
+                </MultiComboBox>
+                <Label text="{i18n>labelStrategy}" class="sapUiSmallMarginTop" />
+                <Select selectedKey="{ui>/selectedStrategy}" items="{config>/strategyOptions}" change=".onStrategyChange">
+                    <core:Item key="{config>key}" text="{config>text}" />
+                </Select>
+
+                <Panel
+                    headerText="{i18n>delphiConfigurationHeader}"
+                    expandable="true"
+                    expanded="true"
+                    visible="{ui>/selectedStrategyUsesDelphi}"
+                    class="sapUiSmallMarginTop">
+                    <VBox>
+                <Panel
+                    headerText="{i18n>delphiItemsHeader}"
+                    expandable="true"
+                    expanded="false"
+                    visible="{ui>/selectedStrategyUsesDelphi}"
+                    class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="{i18n>delphiItemsDescription}" wrapping="true" />
+                        <List items="{ui>/delphiItems}" noDataText="{i18n>delphiItemsEmpty}" class="sapUiSmallMarginTop">
+                            <CustomListItem>
+                                <HBox alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <TextArea
+                                        value="{ui>statement}"
+                                        placeholder="{i18n>delphiItemPlaceholder}"
+                                        rows="2"
+                                        growing="true"
+                                        growingMaxLines="5"
+                                        width="100%" />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        type="Transparent"
+                                        tooltip="{i18n>buttonRemoveDelphiItem}"
+                                        press=".onRemoveDelphiItem"
+                                        class="sapUiTinyMarginBegin">
+                                        <customData>
+                                            <core:CustomData key="itemId" value="{ui>itemId}" writeToDom="false" />
+                                        </customData>
+                                    </Button>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                        <HBox alignItems="Center" class="sapUiSmallMarginTop">
+                            <Button
+                                text="{i18n>buttonAddDelphiItem}"
+                                icon="sap-icon://add"
+                                press=".onAddDelphiItem" />
+                            <Text text="{i18n>delphiItemScaleInfo}" class="sapUiSmallMarginBegin" />
+                        </HBox>
+                    </VBox>
+                </Panel>
+
+                <Panel
+                    headerText="{i18n>delphiRoundPlanHeader}"
+                    expandable="true"
+                    expanded="false"
+                    visible="{ui>/selectedStrategyUsesDelphi}"
+                    class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin" items="{ui>/delphiRoundEntries}">
+                        <VBox class="sapUiSmallMarginBottom">
+                            <Label text="{= ${i18n>labelRoundPlanRoundPrefix} + ' ' + ${ui>index} }" />
+                            <Select selectedKey="{ui>mode}" items="{ui>/delphiRoundModes}" change=".onDelphiRoundModeChange">
+                                <core:Item key="{ui>key}" text="{ui>text}" />
+                                <customData>
+                                    <core:CustomData key="round" value="{ui>key}" writeToDom="false" />
+                                </customData>
+                            </Select>
+                            <MultiComboBox
+                                selectedKeys="{ui>itemIds}"
+                                items="{ui>/delphiItems}"
+                                visible="{= ${ui>mode} === 'rate' || ${ui>mode} === 'discuss' }"
+                                selectionChange=".onDelphiRoundItemsChange"
+                                placeholder="{i18n>delphiRoundItemsPlaceholder}"
+                                class="sapUiTinyMarginTop">
+                                <core:Item key="{ui>itemId}" text="{ui>statement}" />
+                                <customData>
+                                    <core:CustomData key="round" value="{ui>key}" writeToDom="false" />
+                                </customData>
+                            </MultiComboBox>
+                            <Text
+                                text="{i18n>delphiRoundMostDisputedInfo}"
+                                visible="{= ${ui>mode} === 'most_disputed' }"
+                                wrapping="true"
+                                class="sapUiTinyMarginTop" />
+                        </VBox>
+                    </VBox>
+                </Panel>
+
+                <Panel headerText="{i18n>titleRoundPlan}" expandable="true" expanded="false" class="sapUiSmallMarginTop" visible="{= ${ui>/roundPlanEntries}.length > 0 }">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="{i18n>textRoundPlanInfo}" wrapping="true" />
+                        <VBox items="{ui>/roundPlanEntries}">
+                            <VBox>
+                                <Label text="{= ${i18n>labelRoundPlanRoundPrefix} + ' ' + ${ui>index} }" class="sapUiSmallMarginTop" />
+                                <TextArea
+                                    value="{parts: [{path: 'ui>/roundPlan'}, {path: 'ui>field'}], formatter: '.formatRoundPlanValue'}"
+                                    valueLiveUpdate="true"
+                                    rows="3"
+                                    growing="true"
+                                    growingMaxLines="10"
+                                    change=".onRoundPlanFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="{ui>field}" writeToDom="false" />
+                                    </customData>
+                                </TextArea>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+                </Panel>
+                <HBox class="sapUiSmallMarginTop" alignItems="Center">
+                    <CheckBox selected="{ui>/isolatedRoundsOverrideEnabled}" text="{i18n>labelIsolatedRoundsOverride}" />
+                    <StepInput value="{ui>/isolatedRoundsOverride}" min="0" max="5" step="1" enabled="{ui>/isolatedRoundsOverrideEnabled}" class="sapUiTinyMarginBegin" />
+                </HBox>
+                <Text text="{i18n>textIsolatedRoundsOverrideInfo}" wrapping="true" class="sapUiTinyMarginTop" />
+                </VBox>
+                </Panel>
+                <HBox class="sapUiSmallMarginTop">
+                    <Button text="{i18n>buttonStartDiscussion}" type="Emphasized" press=".onStart" enabled="{= !${ui>/discussionRunning} }" />
+                    <Button text="{i18n>buttonStop}" press=".onStop" busy="{ui>/discussionStopping}" enabled="{= ${ui>/discussionRunning} &amp;&amp; !${ui>/discussionStopping} }" class="sapUiTinyMarginBegin" />
+                    <Button icon="sap-icon://save" tooltip="{i18n>tooltipSaveTemplate}" press=".onSaveTemplate" enabled="{= !!${api>/currentDiscussion} &amp;&amp; (${api>/currentDiscussion/status} === 'completed' || ${api>/currentDiscussion/status} === 'stopped') }" class="sapUiTinyMarginBegin" />
+                    <CheckBox text="{i18n>labelDebugTrace}" selected="{ui>/traceEnabled}" class="sapUiTinyMarginBegin" />
+                </HBox>
+                <HBox class="sapUiSmallMarginTop" alignItems="Center">
+                    <Label text="{i18n>labelDiscussionTemplate}" class="sapUiTinyMarginEnd" />
+                    <Select selectedKey="{ui>/selectedTemplateId}" forceSelection="false" items="{api>/discussionTemplates}" change=".onTemplateSelected" width="18rem">
+                        <core:Item key="{api>templateId}" text="{api>templateName}" />
+                    </Select>
+                    <Button icon="sap-icon://delete" tooltip="{i18n>tooltipDeleteTemplate}" type="Transparent" press=".onDeleteTemplate" enabled="{= !!${ui>/selectedTemplateId} }" class="sapUiTinyMarginBegin" />
+                    <Label text="{i18n>labelDiscussionHistory}" class="sapUiMediumMarginBegin sapUiTinyMarginEnd" />
+                    <Select selectedKey="" forceSelection="false" items="{api>/discussions}" change=".onDiscussionSelected" width="18rem">
+                        <core:Item key="{api>discussionId}" text="{= ${api>status} + ' · ' + ${api>topic} }" />
+                    </Select>
+                    <Button icon="sap-icon://delete" tooltip="{i18n>tooltipDeleteDiscussion}" type="Transparent" press=".onDeleteDiscussion" enabled="{= !!${api>/currentDiscussion} &amp;&amp; (${api>/currentDiscussion/status} === 'completed' || ${api>/currentDiscussion/status} === 'stopped' || ${api>/currentDiscussion/status} === 'failed') }" class="sapUiTinyMarginBegin" />
+                </HBox>
+                <HBox class="sapUiMediumMarginTop" alignItems="Center">
+                    <SegmentedButton selectedKey="{ui>/discussionViewMode}" selectionChange=".onDiscussionViewModeChange">
+                        <items>
+                            <SegmentedButtonItem key="discussion" text="{i18n>viewDiscussion}" width="10rem" />
+                            <SegmentedButtonItem key="trace" text="{i18n>viewLlmTrace}" width="10rem" />
+                        </items>
+                    </SegmentedButton>
+                    <Button icon="sap-icon://download" tooltip="{i18n>tooltipDownloadDiscussion}" press=".onDownloadDiscussion" enabled="{= !!${api>/currentDiscussion} }" class="sapUiTinyMarginBegin" />
+                </HBox>
+                <VBox visible="{= ${ui>/discussionViewMode} === 'discussion' }">
+                    <Title text="{i18n>sectionDiscussion}" level="H2" class="sapUiMediumMarginTop" />
+                    <List items="{api>/currentDiscussion/messages}" noDataText="{i18n>noDiscussionContributions}">
+                    <CustomListItem>
+                        <Panel expandable="true" expanded="true" headerText="{= ${api>personaName} + ' - ' + ${i18n>labelRound} + ' ' + ${api>roundIndex} }">
+                            <VBox class="sapUiSmallMargin">
+                                <HBox alignItems="Center">
+                                    <Label text="{i18n>labelPhase}" design="Bold" class="sapUiTinyMarginEnd" />
+                                    <Text text="{= ${api>phase} || ${i18n>phaseDiscussion} }" />
+                                </HBox>
+                                <HBox alignItems="Center" visible="{= !!${api>position} || ${api>confidence} !== null }">
+                                    <Label text="{i18n>labelPosition}" design="Bold" class="sapUiTinyMarginEnd" />
+                                    <Text text="{= ${api>position} || '-' }" />
+                                    <Label text="{i18n>labelConfidence}" design="Bold" class="sapUiSmallMarginBegin sapUiTinyMarginEnd" />
+                                    <Text text="{= ${api>confidence} !== null ? ${api>confidence} : '-' }" />
+                                </HBox>
+                                <HBox alignItems="Center" visible="{= !!${api>itemId} }">
+                                    <Label text="{i18n>labelDelphiItem}" design="Bold" class="sapUiTinyMarginEnd" />
+                                    <Text text="{= ${api>itemStatement} || ${api>itemId} }" />
+                                    <Label text="{i18n>labelRating}" design="Bold" class="sapUiSmallMarginBegin sapUiTinyMarginEnd" />
+                                    <Text text="{api>rating}" />
+                                </HBox>
+                                <Label text="{i18n>labelContribution}" design="Bold" class="sapUiSmallMarginTop" />
+                                <Text text="{path: 'api>content', formatter: '.formatContributionContent'}" wrapping="true" />
+                            </VBox>
+                        </Panel>
+                    </CustomListItem>
+                    </List>
+                    <Panel headerText="{i18n>panelResult}" visible="{= !!${api>/currentDiscussion/summary} }" class="sapUiSmallMarginTop">
+                        <Text text="{api>/currentDiscussion/summary}" wrapping="true" class="sapUiSmallMargin" />
+                        <VBox visible="{= !!${api>/currentResult/consensusLevel} }" class="sapUiSmallMargin">
+                            <ObjectStatus text="{= ${i18n>labelConsensus} + ': ' + (${api>/currentResult/consensusLevel} * 100).toFixed(0) + '%' }" />
+                            <ObjectStatus text="{= ${i18n>labelDisagreement} + ': ' + (${api>/currentResult/disagreementLevel} * 100).toFixed(0) + '%' }" />
+                            <ObjectStatus text="{= ${i18n>labelStability} + ': ' + (${api>/currentResult/stabilityLevel} * 100).toFixed(0) + '%' }" visible="{= ${api>/currentResult/stabilityLevel} !== null }" />
+                            <ObjectStatus text="{= ${i18n>labelPolarization} + ': ' + (${api>/currentResult/polarizationLevel} * 100).toFixed(0) + '%' }" visible="{= ${api>/currentResult/polarizationLevel} !== null }" />
+                        </VBox>
+                        <List items="{api>/currentResult/itemMetricEntries}" noDataText="{i18n>noDelphiItemMetrics}">
+                            <CustomListItem>
+                                <VBox class="sapUiSmallMargin">
+                                    <Title text="{api>statement}" level="H4" />
+                                    <ObjectStatus text="{= ${i18n>labelConsensus} + ': ' + (${api>consensusLevel} * 100).toFixed(0) + '%' }" visible="{= ${api>consensusLevel} !== null }" />
+                                    <ObjectStatus text="{= ${i18n>labelStability} + ': ' + (${api>stabilityLevel} * 100).toFixed(0) + '%' }" visible="{= ${api>stabilityLevel} !== null }" />
+                                    <Text text="{= ${i18n>labelRatingDistribution} + ': ' + ${api>ratingDistributionText} }" wrapping="true" />
+                                    <Text text="{= ${i18n>labelChangedRatings} + ': ' + ${api>changedCount} }" />
+                                </VBox>
+                            </CustomListItem>
+                        </List>
+                    </Panel>
+                </VBox>
+                <VBox visible="{= ${ui>/discussionViewMode} === 'trace' }" class="sapUiSmallMarginTop">
+                    <BusyIndicator visible="{api>/traceBusy}" />
+                    <MessageStrip visible="{= !!${api>/traceError} }" type="Error" text="{api>/traceError}" />
+                    <Text visible="{= !!${api>/currentTrace} &amp;&amp; !${api>/currentTrace/enabled} }" text="{i18n>traceDisabled}" />
+                    <Text visible="{= !!${api>/currentTrace/enabled} &amp;&amp; !${api>/currentTrace/entries/length} }" text="{i18n>traceNoData}" />
+                    <Button
+                        text="{= ${ui>/traceAllExpanded} ? ${i18n>buttonCollapseAll} : ${i18n>buttonExpandAll} }"
+                        icon="{= ${ui>/traceAllExpanded} ? 'sap-icon://collapse-all' : 'sap-icon://expand-all' }"
+                        press=".onToggleTraceExpansion"
+                        visible="{= !!${api>/currentTrace/entries/length} }"
+                        class="sapUiTinyMarginBottom" />
+                    <List items="{api>/currentTrace/entries}" noDataText="{i18n>traceNoData}">
+                        <CustomListItem>
+                            <Panel expandable="true" expanded="{ui>/traceAllExpanded}" headerText="{= ${api>sequence} + '. ' + ${api>callType} + ' - ' + (${api>personaName} || 'system') }">
+                                <VBox class="sapUiSmallMargin">
+                                    <ObjectStatus text="{= ${i18n>traceRound} + ': ' + (${api>roundIndex} || '-') + ' | ' + ${i18n>traceStatus} + ': ' + ${api>status} }" />
+                                    <Text text="{= ${i18n>traceDuration} + ': ' + ${api>durationMs} + ' ms' }" visible="{= ${api>durationMs} !== null }" />
+                                    <Label text="{i18n>traceSystemPrompt}" visible="{= !!${api>systemPrompt} }" class="sapUiSmallMarginTop" />
+                                    <Text text="{api>systemPrompt}" visible="{= !!${api>systemPrompt} }" wrapping="true" class="sapUiTinyMarginBegin" />
+                                    <Label text="{i18n>traceUserPrompt}" visible="{= !!${api>userPrompt} }" class="sapUiSmallMarginTop" />
+                                    <Text text="{api>userPrompt}" visible="{= !!${api>userPrompt} }" wrapping="true" class="sapUiTinyMarginBegin" />
+                                    <Label text="{i18n>traceResponse}" visible="{= !!${api>response} }" class="sapUiSmallMarginTop" />
+                                    <Text text="{api>response}" visible="{= !!${api>response} }" wrapping="true" class="sapUiTinyMarginBegin" />
+                                    <VBox visible="{= !!${api>analysisOutput} }" class="sapUiSmallMarginTop">
+                                        <ObjectStatus text="{= ${i18n>traceParticipantResponses} + ': ' + ${api>analysisParticipantResponses} }" />
+                                        <ObjectStatus text="{= ${i18n>traceConfiguredItems} + ': ' + ${api>analysisConfiguredItemIdsText} }" />
+                                        <Title text="{i18n>tracePositions}" level="H5" visible="{= !!${api>analysisPositions} }" />
+                                        <ObjectStatus text="{= ${i18n>labelConsensus} + ': ' + ${api>analysisPositions/consensusText} }" visible="{= !!${api>analysisPositions} }" />
+                                        <ObjectStatus text="{= ${i18n>labelDisagreement} + ': ' + ${api>analysisPositions/disagreementText} }" visible="{= !!${api>analysisPositions} }" />
+                                        <ObjectStatus text="{= ${i18n>labelStability} + ': ' + ${api>analysisPositions/stabilityText} }" visible="{= !!${api>analysisPositions} }" />
+                                        <ObjectStatus text="{= ${i18n>labelPolarization} + ': ' + ${api>analysisPositions/polarizationText} }" visible="{= !!${api>analysisPositions} }" />
+                                        <Text text="{= ${i18n>traceMinorityPositions} + ': ' + ${api>analysisPositions/minorityPositionsText} }" visible="{= !!${api>analysisPositions} }" wrapping="true" />
+                                        <Text text="{= ${i18n>tracePositionRounds} + ': ' + ${api>analysisPositionRoundsText} }" visible="{= !!${api>analysisPositionRoundsText} }" wrapping="true" />
+                                        <Title text="{i18n>traceItems}" level="H5" class="sapUiSmallMarginTop" />
+                                        <Text text="{i18n>traceNoItems}" visible="{= !${api>analysisItemEntries/length} }" />
+                                        <List items="{api>analysisItemEntries}" visible="{= !!${api>analysisItemEntries/length} }">
+                                            <CustomListItem>
+                                                <VBox class="sapUiSmallMarginBegin sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                                    <Title text="{= ${api>statement} || ${api>itemId} }" level="H6" />
+                                                    <Text text="{i18n>traceNoRatings}" visible="{= !${api>finalResponses} }" />
+                                                    <ObjectStatus text="{= ${i18n>labelConsensus} + ': ' + ${api>consensusText} }" visible="{= !!${api>finalResponses} }" />
+                                                    <ObjectStatus text="{= ${i18n>labelDisagreement} + ': ' + ${api>disagreementText} }" visible="{= !!${api>finalResponses} }" />
+                                                    <ObjectStatus text="{= ${i18n>labelStability} + ': ' + ${api>stabilityText} }" visible="{= ${api>stabilityLevel} !== null }" />
+                                                    <ObjectStatus text="{= ${i18n>labelPolarization} + ': ' + ${api>polarizationText} }" visible="{= ${api>polarizationLevel} !== null }" />
+                                                    <Text text="{= ${i18n>labelRatingDistribution} + ': ' + ${api>ratingDistributionText} }" visible="{= !!${api>finalResponses} }" wrapping="true" />
+                                                    <Text text="{= ${i18n>traceMinorityRatings} + ': ' + ${api>minorityRatingsText} }" visible="{= !!${api>finalResponses} }" wrapping="true" />
+                                                    <Text text="{= ${i18n>traceChangedCount} + ': ' + ${api>changedCount} }" visible="{= ${api>changedCount} !== undefined }" />
+                                                </VBox>
+                                            </CustomListItem>
+                                        </List>
+                                    </VBox>
+                                    <Label text="{i18n>traceError}" visible="{= !!${api>error} }" class="sapUiSmallMarginTop" />
+                                    <Text text="{api>error}" visible="{= !!${api>error} }" wrapping="true" class="sapUiTinyMarginBegin" />
+                                </VBox>
+                            </Panel>
+                        </CustomListItem>
+                    </List>
+                </VBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

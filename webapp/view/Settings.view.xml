@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:View controllerName="persona.discussion.lab.controller.Settings" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Page title="{i18n>settingsPageTitle}" showNavButton="true" navButtonPress=".onBack">
+        <headerContent>
+            <Button text="{i18n>buttonSave}" type="Emphasized" press=".onSave" />
+        </headerContent>
+        <content>
+            <VBox class="sapUiResponsiveMargin" width="100%">
+                <Panel headerText="{i18n>panelGlobalModelConfiguration}" expandable="false">
+                    <VBox class="sapUiSmallMargin">
+                        <Label text="{i18n>labelTemperature}" class="sapUiSmallMarginTop" />
+                        <StepInput value="{config>/temperature}" min="0.2" max="0.8" step="0.1" displayValuePrecision="1" valueLiveUpdate="true" valueState="{= ${config>/temperature} &lt; 0.2 || ${config>/temperature} &gt; 0.8 ? 'Warning' : 'None' }" valueStateText="{i18n>warningTemperatureRange}" />
+                        <Text text="{i18n>warningTemperatureRange}" visible="{= ${config>/temperature} &lt; 0.2 || ${config>/temperature} &gt; 0.8 }" class="sapUiTinyMarginTop" />
+                        <Label text="{i18n>labelMaximumRounds}" class="sapUiSmallMarginTop" />
+                        <StepInput value="{config>/maxRounds}" min="1" max="5" />
+                        <Label text="{i18n>labelTokenLimit}" class="sapUiSmallMarginTop" />
+                        <StepInput value="{config>/tokenLimit}" min="128" max="16000" step="128" />
+                    </VBox>
+                </Panel>
+
+                <Panel headerText="{i18n>panelRuntimeEnvironment}" class="sapUiSmallMarginTop" expandable="false">
+                    <VBox class="sapUiSmallMargin">
+                        <Label text="{i18n>labelOpenAiApiKey}" />
+                        <Input value="{env>/OPENAI_API_KEY}" type="Password" />
+
+                        <Label text="{i18n>labelOpenAiBaseUrl}" class="sapUiSmallMarginTop" />
+                        <Input value="{env>/OPENAI_BASE_URL}" />
+
+                        <Label text="{i18n>labelOpenAiModel}" class="sapUiSmallMarginTop" />
+                        <Input value="{env>/OPENAI_MODEL}" />
+                    </VBox>
+                </Panel>
+
+                <Panel headerText="{i18n>panelGlobalPromptTemplates}" class="sapUiSmallMarginTop" expandable="false">
+                    <VBox class="sapUiSmallMargin">
+                        <Text text="{i18n>textGlobalPromptTemplatesInfo}" wrapping="true" />
+                        <Label text="{i18n>labelModeratorSystemPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/moderatorSystemPrompt}" rows="2" growing="true" growingMaxLines="8" />
+
+                        <Label text="{i18n>labelModeratorUserPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/moderatorUserPrompt}" rows="3" growing="true" growingMaxLines="10" />
+
+                        <Label text="{i18n>labelSelectionSystemPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/selectionSystemPrompt}" rows="2" growing="true" growingMaxLines="6" />
+
+                        <Label text="{i18n>labelSelectionUserPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/selectionUserPrompt}" rows="3" growing="true" growingMaxLines="10" />
+
+                        <Label text="{i18n>labelParticipantSystemPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/participantSystemPrompt}" rows="3" growing="true" growingMaxLines="10" />
+
+                        <Label text="{i18n>labelParticipantUserPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/participantUserPrompt}" rows="4" growing="true" growingMaxLines="12" />
+
+                        <Label text="{i18n>labelRoundSummarySystemPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/roundSummarySystemPrompt}" rows="2" growing="true" growingMaxLines="6" />
+
+                        <Label text="{i18n>labelRoundSummaryUserPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/roundSummaryUserPrompt}" rows="3" growing="true" growingMaxLines="10" />
+
+                        <Label text="{i18n>labelFinalSummarySystemPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/finalSummarySystemPrompt}" rows="2" growing="true" growingMaxLines="6" />
+
+                        <Label text="{i18n>labelFinalSummaryUserPrompt}" class="sapUiSmallMarginTop" />
+                        <TextArea value="{config>/promptTemplates/global/finalSummaryUserPrompt}" rows="4" growing="true" growingMaxLines="12" />
+                    </VBox>
+                </Panel>
+
+                <Panel headerText="{i18n>panelStrategySubclasses}" class="sapUiSmallMarginTop" expandable="false">
+                    <HBox class="sapUiSmallMargin" width="100%">
+                        <VBox width="20rem" class="sapUiTinyMarginEnd">
+                            <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                                <Title text="{i18n>titleAvailableSubclasses}" level="H5" />
+                                <HBox>
+                                    <Button icon="sap-icon://add" tooltip="{i18n>buttonAdd}" type="Transparent" press=".onAddStrategySpec" />
+                                    <Button icon="sap-icon://delete" tooltip="{i18n>buttonDelete}" type="Transparent" press=".onDeleteStrategySpec" class="sapUiTinyMarginBegin" enabled="{config>/selectedStrategySpecDeletable}" />
+                                </HBox>
+                            </HBox>
+                            <List
+                                items="{config>/strategySpecifications}"
+                                mode="SingleSelectMaster"
+                                includeItemInSelection="true"
+                                selectionChange=".onStrategySpecSelectionChange">
+                                <StandardListItem
+                                    title="{config>displayName}"
+                                    description="{= ${config>strategyKey} + ' · ' + ${config>baseStrategy} }"
+                                    selected="{= ${config>strategyKey} === ${config>/selectedStrategySpecKey} }" />
+                            </List>
+                        </VBox>
+
+                        <Panel headerText="{i18n>panelSelectedSubclass}" expandable="false" visible="{= !!${config>/selectedStrategySpec} }" width="100%">
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="{i18n>textSelectedSubclassInfo}" wrapping="true" />
+                                <Title text="{= ${config>/selectedStrategySpec/displayName} + ' (' + ${config>/selectedStrategySpec/strategyKey} + ')' }" level="H5" class="sapUiSmallMarginTop" />
+
+                                <Label text="{i18n>labelStrategyKey}" class="sapUiSmallMarginTop" />
+                                <Input value="{config>/selectedStrategySpec/strategyKey}" valueLiveUpdate="true" change=".onSelectedSpecFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="strategyKey" writeToDom="false" />
+                                    </customData>
+                                </Input>
+
+                                <Label text="{i18n>labelDisplayName}" class="sapUiSmallMarginTop" />
+                                <Input value="{config>/selectedStrategySpec/displayName}" valueLiveUpdate="true" change=".onSelectedSpecFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="displayName" writeToDom="false" />
+                                    </customData>
+                                </Input>
+
+                                <Label text="{i18n>labelBaseStrategy}" class="sapUiSmallMarginTop" />
+                                <Select selectedKey="{config>/selectedStrategySpec/baseStrategy}" change=".onSelectedSpecFieldChange" items="{config>/implementedStrategies}">
+                                    <core:Item key="{config>key}" text="{config>displayName}" />
+                                    <customData>
+                                        <core:CustomData key="field" value="baseStrategy" writeToDom="false" />
+                                    </customData>
+                                </Select>
+
+                                <Label text="{i18n>labelPeerVisibility}" class="sapUiSmallMarginTop" />
+                                <Select selectedKey="{config>/selectedStrategySpec/peerVisibility}" change=".onSelectedSpecFieldChange">
+                                    <core:Item key="named" text="{i18n>peerVisibilityNamed}" />
+                                    <core:Item key="anonymous" text="{i18n>peerVisibilityAnonymous}" />
+                                    <customData>
+                                        <core:CustomData key="field" value="peerVisibility" writeToDom="false" />
+                                    </customData>
+                                </Select>
+
+                                <Label text="{i18n>labelIsolatedRounds}" class="sapUiSmallMarginTop" />
+                                <StepInput value="{config>/selectedStrategySpec/isolatedRounds}" min="0" max="5" step="1" change=".onSelectedSpecFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="isolatedRounds" writeToDom="false" />
+                                    </customData>
+                                </StepInput>
+                                <Text text="{i18n>textIsolatedRoundsInfo}" wrapping="true" class="sapUiTinyMarginTop" />
+
+                                <Label text="{i18n>labelModeratorInstructionOverride}" class="sapUiSmallMarginTop" />
+                                <TextArea value="{config>/selectedStrategySpec/promptTemplates/moderatorInstruction}" valueLiveUpdate="true" rows="3" growing="true" growingMaxLines="10" change=".onSelectedSpecFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="moderatorInstruction" writeToDom="false" />
+                                    </customData>
+                                </TextArea>
+
+                                <Label text="{i18n>labelParticipantInstructionOverride}" class="sapUiSmallMarginTop" />
+                                <TextArea value="{config>/selectedStrategySpec/promptTemplates/participantInstruction}" valueLiveUpdate="true" rows="4" growing="true" growingMaxLines="12" change=".onSelectedSpecFieldChange">
+                                    <customData>
+                                        <core:CustomData key="field" value="participantInstruction" writeToDom="false" />
+                                    </customData>
+                                </TextArea>
+                            </VBox>
+                        </Panel>
+                    </HBox>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,115 @@
+@startuml datamodel
+title Domain Model - Persona Discussion Lab
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+hide empty methods
+
+class Persona {
+  personaId: String
+  name: String
+  role: String?
+  description: String?
+  background: String?
+  expertise: String[*]
+  goals: String[*]
+  constraints: String[*]
+  communicationStyle: String?
+}
+
+class Discussion {
+  discussionId: String
+  topic: String
+  status: queued | running | completed | stopped | failed
+  strategy: String
+  baseStrategy: String
+  traceEnabled: Boolean
+  stopRequested: Boolean
+  error: String?
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+class DelphiItem {
+  itemId: String
+  statement: String
+  scaleMin: Integer
+  scaleMax: Integer
+  status: active | inactive
+}
+
+class DiscussionConfiguration {
+  model: String
+  temperature: Float
+  maxRounds: Integer
+  tokenLimit: Integer
+  roundPlan: Map
+}
+
+class StrategySpecification {
+  strategyKey: String
+  displayName: String
+  baseStrategy: String
+  isolatedRounds: Integer
+  peerVisibility: named | anonymous
+}
+
+class DiscussionMessage {
+  messageId: String
+  roundIndex: Integer
+  role: participant | moderator | summary
+  content: String
+  position: String?
+  confidence: Float? [0..1]
+  respondsTo: String[*]
+  revisedFrom: String?
+  itemId: String?
+  rating: Integer? [1..5]
+  revised: Boolean?
+  validStructuredResponse: Boolean
+}
+
+class DiscussionResult {
+  summary: String?
+  consensus: String?
+  disagreements: String[*]
+  recommendations: String[*]
+  consensusLevel: Float? [0..1]
+  stabilityLevel: Float? [0..1]
+  disagreementLevel: Float? [0..1]
+  polarizationLevel: Float? [0..1]
+  itemMetrics: Map
+}
+
+class DiscussionTemplate {
+  templateId: String
+  templateName: String
+  topic: String
+  strategy: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+Discussion "1" *-- "1..*" Persona : personas
+Discussion "1" *-- "0..*" DelphiItem : rates
+Discussion "1" *-- "1" DiscussionConfiguration : uses
+Discussion "1" *-- "0..*" DiscussionMessage : messages
+Discussion "1" *-- "0..1" DiscussionResult : result
+DiscussionMessage "0..*" --> "1" Persona : authored by
+DiscussionConfiguration "1" *-- "0..*" StrategySpecification : configures
+DiscussionTemplate "0..*" --> "1" Discussion : based on
+DiscussionTemplate "0..*" --> "0..*" Persona : selects
+
+note right of Discussion
+  A discussion contains snapshots of its
+  selected personas. This preserves the
+  participants of the discussion.
+end note
+
+note bottom of DiscussionTemplate
+  A template stores reusable discussion
+  information and selected personas.
+end note
+@enduml

@@ -1,0 +1,90 @@
+.env
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# UI5 / build
+dist/
+resources/
+.ui5/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+build/
+dist/
+*.egg
+
+# Backend virtualenv in repository
+backend/.venv/
+
+# Environment files
+.env
+.env.*
+.env.local
+
+# Logs
+*.log
+logs/
+
+# LaTeX build artifacts (PDFs remain trackable)
+*.acn
+*.acr
+*.alg
+*.aux
+*.bcf
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.glo
+*.gls
+*.glg
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# Outputs and results (generated data)
+outputs/
+results/
+
+# Misc
+*.bak
+*.tmp
+*.spec

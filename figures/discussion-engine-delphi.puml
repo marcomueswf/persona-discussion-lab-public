@@ -1,0 +1,47 @@
+@startuml discussion-engine-delphi
+title Delphi Discussion Engine - Structured Rating Flow
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+component "DiscussionService._run" as service
+component "initialize round" as initialize
+component "select next persona" as select
+component "Delphi persona turn" as persona
+component "validate rating\nand revision" as validate
+component "persist turn" as persist
+component "round summary\nand anonymous feedback" as feedback
+component "next round\nor terminate" as termination
+component "DelphiAnalyzer" as analyzer
+database "Persisted discussion" as store
+
+service --> initialize : create engine
+initialize --> select
+select --> persona : next persona
+select --> feedback : all personas complete
+persona --> validate : one or more Delphi items
+validate --> persist : structured response
+persist --> select : more personas
+persist --> feedback : persona complete
+feedback --> termination
+termination --> initialize : next round
+termination --> analyzer : final round
+analyzer --> store : persist metrics
+persist --> store : persist ratings and revisions
+
+note right of initialize
+Round 1 collects initial ratings.
+Later rounds receive aggregated feedback.
+end note
+
+note right of feedback
+Summarizes rating distributions,
+arguments and remaining disagreement.
+end note
+
+note right of termination
+Stops at the configured maximum
+rounds or when stopRequested is set.
+end note
+@enduml

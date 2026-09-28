@@ -1,0 +1,38 @@
+@startuml
+title Persistence - Local JSON Storage
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+component "AbstractLocalPersistence\nlocking + atomic replace" as base
+component "LocalPersonaPersistence" as personas
+component "LocalDiscussionPersistence" as discussions
+component "LocalDiscussionTemplatePersistence" as templates
+component "LocalConfigurationPersistence" as configuration
+database "data/personas.json" as personaFile
+database "data/discussions.json" as discussionFile
+database "data/discussion_templates.json" as templateFile
+database "data/configuration.json" as configurationFile
+
+personas --|> base
+discussions --|> base
+templates --|> base
+configuration --|> base
+personas --> personaFile
+discussions --> discussionFile
+templates --> templateFile
+configuration --> configurationFile
+
+note right of discussions
+Stores complete runs:
+topic, strategy, personas,
+configuration, messages,
+status and result.
+end note
+note right of templates
+Stores reusable setup snapshots:
+name, topic, strategy,
+persona IDs and configuration.
+end note
+@enduml

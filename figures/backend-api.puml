@@ -1,0 +1,31 @@
+@startuml backend-api
+title Backend - API and Services
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+component "app.py\n- FastAPI composition root" as app
+component "API router layer\n\n- Personas\n- Discussions and templates\n- Configurations\n- Environment\n- Results" as api
+component "Application service layer\n\n- PersonaService\n- DiscussionService\n- DiscussionTemplateService\n- ConfigurationService\n- EnvironmentService\n- ResultService\n- DelphiAnalyzer\n- PromptService" as services
+component "Discussion Engine\n\n- LangGraph orchestration\n- Persona turns\n- Moderator and summaries" as engine
+component "models.py\n-Pydantic API contracts" as models
+
+app --> api : mounts /api
+api --> models : validates requests
+api --> services : delegates use cases
+services --> models : creates responses
+services --> engine : starts discussions
+
+note right of api
+The router layer exposes the HTTP
+interface and contains no domain logic.
+end note
+
+note right of services
+The service layer coordinates persistence,
+configuration, result projection and analysis.
+end note
+
+@enduml
+

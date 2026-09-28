@@ -1,0 +1,57 @@
+{
+  "sap.app": {
+    "id": "persona.discussion.lab",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.1.0"
+    },
+    "title": "{{appTitle}}"
+  },
+  "sap.ui": {
+    "technology": "UI5"
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "persona.discussion.lab.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.96.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "persona.discussion.lab.i18n.i18n"
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "persona.discussion.lab.view",
+        "controlId": "appNav",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {"pattern": "", "name": "discussion", "target": "discussion"},
+        {"pattern": "personas", "name": "personas", "target": "personas"},
+        {"pattern": "settings", "name": "settings", "target": "settings"}
+      ],
+      "targets": {
+        "discussion": {"viewName": "Discussion"},
+        "personas": {"viewName": "Personas"},
+        "settings": {"viewName": "Settings"}
+      }
+    }
+  }
+}

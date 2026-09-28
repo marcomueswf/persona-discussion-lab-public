@@ -1,0 +1,35 @@
+@startuml frontend
+title Frontend - OpenUI5 Webapp
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+left to right direction
+
+actor User
+component "Component.js\nUI5 bootstrap and router" as component
+component "Views\n\n- App.view.xml\n- Discussion.view.xml\n- Personas.view.xml\n- Settings.view.xml" as views
+component "Controllers\n\n- Discussion.controller.js\n- Personas.controller.js\n- Settings.controller.js" as controllers
+component "Models\n\n- AppModel.js\n- ConfigurationModel.js\n- ui JSONModel" as models
+component "ApiService.js\nfetch client" as apiService
+component "i18n ResourceModel" as i18n
+cloud "Backend API" as backend
+
+User --> views : uses
+component --> views : routes
+views --> controllers : events and bindings
+controllers <--> models : state
+views --> i18n : labels
+models --> apiService : requests
+apiService --> backend : HTTP /api
+
+note right of views
+The views represent the user-facing
+screens of the application.
+end note
+
+note right of models
+Models separate UI state,
+configuration and API data.
+end note
+@enduml
